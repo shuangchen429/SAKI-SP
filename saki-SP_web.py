@@ -2,6 +2,9 @@ import streamlit as st
 import joblib
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')  # 在导入pyplot前设置
+import matplotlib.pyplot as plt
 import matplotlib.pyplot as plt
 from PIL import Image
 
