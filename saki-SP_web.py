@@ -371,58 +371,32 @@ with col2:
             
             if max_stage == "Subphenotype I":
                 st.info("""
-                **Subphenotype I (Hypoinflammatory - Low Risk)**
-                
-                **Clinical Profile:** Mild systemic inflammation with preserved oxygenation. Patients are typically older with higher prevalence of peripheral vascular disease.
-                
-                **Recommended Management:**
-                - **Monitoring:** Regular assessment of renal function and vital signs.
-                - **Fluid Management:** Conservative approach as hemodynamics are relatively stable.
-                - **Interventions:** Avoid unnecessary aggressive interventions; focus on supportive care.
+                **Subphenotype I **
+
                 - **Prognostic Note:** In-hospital mortality 16.4%, with ~71-72% 30-day survival.
                 
                 **Rationale:** Corresponds to less severe inflammatory response; may benefit from phenotype-guided conservative management.
                 """)
             elif max_stage == "Subphenotype II":
                 st.info("""
-                **Subphenotype II (Stable - Low Risk)**
-                
-                **Clinical Profile:** Highest urine output (470 mL/6h), lowest heart/respiratory rates, preserved renal perfusion.
-                
-                **Recommended Management:**
-                - **Fluid Strategy:** Avoid unnecessary fluid administration; patients may correspond to "reparative" phenotypes.
-                - **Renal Support:** Low likelihood of requiring renal replacement therapy (RRT).
-                - **Monitoring:** Focus on maintaining current stability; may recover spontaneously.
+                **Subphenotype II **
+
                 - **Prognostic Note:** Lowest mortality (14.3%); best 30-day survival.
                 
                 **Rationale:** High urine output indicates preserved renal perfusion; aggressive fluids may be harmful in this phenotype.
                 """)
             elif max_stage == "Subphenotype III":
                 st.warning("""
-                **Subphenotype III (Hyperdynamic - Intermediate Risk)**
-                
-                **Clinical Profile:** Hyperdynamic circulation with tachycardia, tachypnea, elevated temperature, and impaired oxygenation (SpO₂≈96%). Youngest patient group with longest ICU stays.
-                
-                **Recommended Management:**
-                - **Oxygenation:** Close monitoring and support for impaired oxygenation.
-                - **Hemodynamics:** Consider vasopressor support to maintain perfusion in hyperdynamic state.
-                - **Metabolic Support:** Address hypermetabolic demands.
+                **Subphenotype III **
+
                 - **Prognostic Note:** 21.6% in-hospital mortality; intermediate risk profile.
                 
                 **Rationale:** Hypermetabolic state requires targeted hemodynamic support; monitor for progression to more severe phenotypes.
                 """)
             elif max_stage == "Subphenotype IV":
                 st.error("""
-                **Subphenotype IV (Critical - High Risk)**
+                **Subphenotype IV **
                 
-                **Clinical Profile:** Severe renal dysfunction (Creatinine 2.2 mg/dL), low urine output (253.5 mL/6h), coagulopathy (high INR), metabolic acidosis (low bicarbonate), intense inflammation. Highest burden of chronic kidney disease (42.4%).
-                
-                **Recommended Management (Warrants Early Aggressive Intervention):**
-                - **Coagulopathy Correction:** Immediate assessment and correction (consider recombinant thrombomodulin if indicated).
-                - **Acid-Base Management:** Aggressive correction of metabolic acidosis.
-                - **Renal Support:** Early consideration of renal replacement therapy (RRT).
-                - **Inflammation Control:** Monitor and manage systemic inflammation.
-                - **Multiorgan Support:** Address associated multiorgan dysfunction.
                 - **Prognostic Note:** Highest mortality (34.2%); poorest 30-day survival (~51%, median ~18 days).
                 
                 **Rationale:** This phenotype represents the "inflammatory/endothelial injury" endotype with severe systemic physiological disruption. Early aggressive intervention is critical.
@@ -475,4 +449,5 @@ st.markdown("""
 <p><strong>⚠️ Disclaimer:</strong> This prediction tool is for clinical decision support and research purposes only. Clinical judgment should always supersede algorithmic predictions.</p>
 <p><strong>For questions or technical support:</strong> Contact the corresponding author: Heng Li, M.D., Ph.D. (lh12818@163.com)</p>
 </div>
+
 """, unsafe_allow_html=True)
