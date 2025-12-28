@@ -17,7 +17,7 @@ with header_container:
     with cols[0]:
         try:
             logo = Image.open("东华医院图标.png")
-            st.image(logo, use_column_width=True)
+            st.image(logo, use_container_width=True)  # 修复 use_column_width 警告
         except FileNotFoundError:
             st.write("Logo not found")
     with cols[1]:
@@ -42,7 +42,7 @@ except Exception as e:
     st.error(f"Error loading models: {str(e)}")
     st.stop()
 
-# 定义特征参数
+# 定义特征参数 - 修复 INR 缺少 unit 的问题
 feature_ranges = {
     'Heart rate': {"type": "numerical", "min": 20, "max": 250, "default": 80, "unit": "bpm"},
     'MAP': {"type": "numerical", "min": 30, "max": 200, "default": 90, "unit": "mmHg"},
@@ -56,7 +56,7 @@ feature_ranges = {
     'Glucose': {"type": "numerical", "min": 20, "max": 1500, "default": 90, "unit": "mg/dL"},
     'Sodium': {"type": "numerical", "min": 110, "max": 170, "default": 140, "unit": "mmol/L"},
     'Potassium': {"type": "numerical", "min": 2, "max": 9, "default": 4.0, "unit": "mmol/L"},
-    'INR': {"type": "numerical", "min": 0.5, "max": 20, "default": 1.0},
+    'INR': {"type": "numerical", "min": 0.5, "max": 20, "default": 1.0, "unit": ""},  # 添加 unit 键
     'PTT': {"type": "numerical", "min": 5, "max": 150, "default": 30, "unit": "seconds"},
     'Hemoglobin': {"type": "numerical", "min": 3, "max": 25, "default": 14, "unit": "g/dL"},
     'MCHC': {"type": "numerical", "min": 25, "max": 40, "default": 30, "unit": "g/dL"},
@@ -157,13 +157,17 @@ with col1:
             for feature in features:
                 properties = feature_ranges[feature]
                 if properties["type"] == "numerical":
+                    # 安全获取 unit，如果不存在则使用空字符串
+                    unit = properties.get("unit", "")
+                    label = f"{feature} ({unit})" if unit else feature
+                    
                     value = st.number_input(
-                        label=f"{feature} ({properties['unit']})",
+                        label=label,
                         min_value=float(properties["min"]),
                         max_value=float(properties.get("max", 100000)),
                         value=float(properties["default"]),
                         key=feature,
-                        help=f"Range: {properties['min']}-{properties.get('max', 'N/A')} {properties['unit']}"
+                        help=f"Range: {properties['min']}-{properties.get('max', 'N/A')} {unit}"
                     )
                 input_values[feature] = value
     
@@ -341,7 +345,7 @@ with col2:
                 
         except Exception as e:
             st.error(f"❌ Prediction error: {str(e)}")
-            st.exception(e)
+            
     else:
         st.markdown("""
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; border: 1px dashed #ddd;">
