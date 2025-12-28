@@ -72,43 +72,23 @@ feature_order = [
     'Potassium', 'INR', 'PTT', 'Hemoglobin', 'MCHC', 'MCV', 'Platelet', 'Urineoutput 6hr'
 ]
 
-# 修正后的亚型描述字典
+# 简化后的亚型描述字典
 sp_descriptions = {
     "Subphenotype I": {
         "color": "#90EE90",
-        "prognosis": "In-hospital mortality 16.4%",
-        "label": "Low-risk",
-        "risk": "Low",
-        "mortality": "16.4%",
-        "description": "Characterized by mild inflammation and preserved organ function.",
-        "key_features": ["Normal WBC", "Stable vitals", "Adequate urine output"]
+        "prognosis": "In-hospital mortality 16.4%"
     },
     "Subphenotype II": {
         "color": "#87CEEB",
-        "prognosis": "In-hospital mortality 14.3%",
-        "label": "Moderate-risk",
-        "risk": "Moderate",
-        "mortality": "14.3%",
-        "description": "Moderate inflammation with early organ dysfunction signs.",
-        "key_features": ["Elevated WBC", "Mild tachycardia", "Slightly reduced urine output"]
+        "prognosis": "In-hospital mortality 14.3%"
     },
     "Subphenotype III": {
         "color": "#FFD700",
-        "prognosis": "In-hospital mortality 21.6%",
-        "label": "High-risk",
-        "risk": "High",
-        "mortality": "21.6%",
-        "description": "Severe inflammation with significant organ dysfunction.",
-        "key_features": ["High WBC", "Tachycardia", "Low MAP", "Elevated creatinine"]
+        "prognosis": "In-hospital mortality 21.6%"
     },
     "Subphenotype IV": {
         "color": "#FF6B6B",
-        "prognosis": "In-hospital mortality 34.2%",
-        "label": "Critical-risk",
-        "risk": "Critical",
-        "mortality": "34.2%",
-        "description": "Severe multi-organ dysfunction with high mortality risk.",
-        "key_features": ["Very high WBC", "Hypotension", "Anuria", "Coagulopathy", "Metabolic acidosis"]
+        "prognosis": "In-hospital mortality 34.2%"
     }
 }
 
@@ -150,15 +130,6 @@ st.markdown("""
         color: white;
         font-weight: bold;
         font-size: 14px;
-    }
-    .key-feature {
-        background-color: #f0f0f0;
-        border-radius: 4px;
-        padding: 2px 8px;
-        margin-right: 5px;
-        margin-bottom: 5px;
-        display: inline-block;
-        font-size: 12px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -233,20 +204,17 @@ with col2:
             
             # 根据最高概率和亚型设置颜色
             stage_color = sp_descriptions[max_stage]["color"]
-            stage_risk = sp_descriptions[max_stage]["risk"]
-            stage_label = sp_descriptions[max_stage]["label"]
-            stage_mortality = sp_descriptions[max_stage]["mortality"]
+            stage_prognosis = sp_descriptions[max_stage]["prognosis"]
             
             st.markdown(f"""
             <div style="background: linear-gradient(135deg, {stage_color}33 0%, {stage_color}66 100%); 
                         padding: 20px; border-radius: 10px; border-left: 6px solid {stage_color}; 
                         box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px;">
                 <p style="font-size:14px; margin:0; color: #555; font-weight: bold;">PREDICTED SUBPHENOTYPE:</p>
-                <h2 style="margin:8px 0; color: #333;">{max_stage} ({stage_label})</h2>
+                <h2 style="margin:8px 0; color: #333;">{max_stage}</h2>
                 <div style="display: flex; justify-content: space-between; margin-top: 10px;">
                     <div>
-                        <p style="font-size:14px; margin:5px 0; color: #666;">Risk Level: <span style="font-weight: bold; color: {stage_color};">{stage_risk}</span></p>
-                        <p style="font-size:14px; margin:5px 0; color: #666;">Expected In-hospital Mortality: <span style="font-weight: bold; color: {stage_color};">{stage_mortality}</span></p>
+                        <p style="font-size:14px; margin:5px 0; color: #666;">Prognosis: <span style="font-weight: bold; color: {stage_color};">{stage_prognosis}</span></p>
                     </div>
                     <div style="text-align: right;">
                         <p style="font-size:13px; margin:5px 0; color: #888;">Prediction Confidence:</p>
@@ -266,10 +234,8 @@ with col2:
             for stage in ["Subphenotype I", "Subphenotype II", "Subphenotype III", "Subphenotype IV"]:
                 prob_data.append({
                     "Subphenotype": stage,
-                    "Clinical Label": sp_descriptions[stage]["label"],
                     "Probability": f"{probabilities[stage]:.2f}%",
-                    "Risk Level": sp_descriptions[stage]["risk"],
-                    "Mortality": sp_descriptions[stage]["mortality"]
+                    "Prognosis": sp_descriptions[stage]["prognosis"]
                 })
             
             df_prob = pd.DataFrame(prob_data)
@@ -283,12 +249,7 @@ with col2:
             for stage in ["Subphenotype I", "Subphenotype II", "Subphenotype III", "Subphenotype IV"]:
                 prob = probabilities[stage]
                 color = sp_descriptions[stage]["color"]
-                risk = sp_descriptions[stage]["risk"]
-                label = sp_descriptions[stage]["label"]
-                description = sp_descriptions[stage]["description"]
-                mortality = sp_descriptions[stage]["mortality"]
                 prognosis = sp_descriptions[stage]["prognosis"]
-                key_features = sp_descriptions[stage]["key_features"]
                 
                 # 创建卡片
                 st.markdown(f"""
@@ -296,29 +257,19 @@ with col2:
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                         <div>
                             <h4 style="margin: 0; color: #333;">{stage}</h4>
-                            <p style="margin: 2px 0; color: #666; font-size: 14px;"><i>{label}</i></p>
                         </div>
                         <div style="text-align: right;">
                             <span style="background-color: {color}; color: white; padding: 4px 12px; 
-                                         border-radius: 20px; font-size: 12px; font-weight: bold;">{risk}</span>
-                            <p style="margin: 4px 0 0 0; color: #666; font-size: 12px;">Mortality: {mortality}</p>
+                                         border-radius: 20px; font-size: 12px; font-weight: bold;">{stage.split(' ')[1]}</span>
                         </div>
                     </div>
                     
-                    <p style="margin: 10px 0; color: #666; font-size: 13px;">{description}</p>
-                    
-                    <div style="margin: 10px 0;">
-                        <p style="margin: 5px 0; font-weight: bold; color: #333; font-size: 12px;">Key Features:</p>
-                        <div>
-                            {''.join([f'<span class="key-feature">{feat}</span>' for feat in key_features])}
-                        </div>
-                    </div>
+                    <p style="margin: 10px 0 0 0; color: #666; font-size: 13px;">Prognosis: {prognosis}</p>
                     
                     <div style="margin-top: 15px;">
                         <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
                             <div>
                                 <span style="font-weight: bold; color: #333;">Prediction Probability</span>
-                                <span style="font-size: 11px; color: #888; margin-left: 5px;">(this patient)</span>
                             </div>
                             <span style="font-weight: bold; color: {color}; font-size: 16px;">{prob:.2f}%</span>
                         </div>
@@ -328,8 +279,6 @@ with col2:
                             </div>
                         </div>
                     </div>
-                    
-                    <p style="margin: 10px 0 0 0; color: #666; font-size: 11px; font-style: italic;">Prognosis: {prognosis}</p>
                 </div>
                 """, unsafe_allow_html=True)
             
