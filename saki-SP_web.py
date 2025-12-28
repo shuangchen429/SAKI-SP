@@ -5,7 +5,6 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')  # 在导入pyplot前设置
 import matplotlib.pyplot as plt
-import matplotlib.pyplot as plt
 from PIL import Image
 
 # 设置页面配置
@@ -73,22 +72,43 @@ feature_order = [
     'Potassium', 'INR', 'PTT', 'Hemoglobin', 'MCHC', 'MCV', 'Platelet', 'Urineoutput 6hr'
 ]
 
+# 修正后的亚型描述字典
 sp_descriptions = {
     "Subphenotype I": {
         "color": "#90EE90",
-        "prognosis": "In-hospital mortality 16.4%"
+        "prognosis": "In-hospital mortality 16.4%",
+        "label": "Low-risk",
+        "risk": "Low",
+        "mortality": "16.4%",
+        "description": "Characterized by mild inflammation and preserved organ function.",
+        "key_features": ["Normal WBC", "Stable vitals", "Adequate urine output"]
     },
     "Subphenotype II": {
         "color": "#87CEEB",
-        "prognosis": "In-hospital mortality 14.3%"
+        "prognosis": "In-hospital mortality 14.3%",
+        "label": "Moderate-risk",
+        "risk": "Moderate",
+        "mortality": "14.3%",
+        "description": "Moderate inflammation with early organ dysfunction signs.",
+        "key_features": ["Elevated WBC", "Mild tachycardia", "Slightly reduced urine output"]
     },
     "Subphenotype III": {
         "color": "#FFD700",
-        "prognosis": "In-hospital mortality 21.6%"
+        "prognosis": "In-hospital mortality 21.6%",
+        "label": "High-risk",
+        "risk": "High",
+        "mortality": "21.6%",
+        "description": "Severe inflammation with significant organ dysfunction.",
+        "key_features": ["High WBC", "Tachycardia", "Low MAP", "Elevated creatinine"]
     },
     "Subphenotype IV": {
         "color": "#FF6B6B",
-        "prognosis": "In-hospital mortality 34.2%"
+        "prognosis": "In-hospital mortality 34.2%",
+        "label": "Critical-risk",
+        "risk": "Critical",
+        "mortality": "34.2%",
+        "description": "Severe multi-organ dysfunction with high mortality risk.",
+        "key_features": ["Very high WBC", "Hypotension", "Anuria", "Coagulopathy", "Metabolic acidosis"]
     }
 }
 
@@ -394,4 +414,3 @@ st.markdown("""
 </div>
 
 """, unsafe_allow_html=True)
-
