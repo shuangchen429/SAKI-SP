@@ -139,7 +139,7 @@ col1, col2 = st.columns([1, 1])
 
 with col1:
     st.header("Patient Clinical Parameters")
-    st.markdown("Enter values the first recorded clinical variables within the ±24-hour window of SA-AKI diagnosis:")
+    st.markdown("Enter values for the first recorded clinical variables within the ±24-hour window of SA-AKI diagnosis:")
     
     input_values = {}
     
@@ -367,3 +367,4 @@ st.markdown("""
 </div>
 
 """, unsafe_allow_html=True)
+
