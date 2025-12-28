@@ -247,47 +247,6 @@ with col2:
             
             st.markdown("---")
             
-            # ========== 显示每个亚型的详细卡片 ==========
-            st.markdown("### 📋 Subphenotype Characteristics")
-            
-            for stage in ["Subphenotype I", "Subphenotype II", "Subphenotype III", "Subphenotype IV"]:
-                prob = probabilities[stage]
-                color = sp_descriptions[stage]["color"]
-                prognosis = sp_descriptions[stage]["prognosis"]
-                
-                # 创建卡片
-                st.markdown(f"""
-                <div class="stage-card" style="border-left-color: {color};">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                        <div>
-                            <h4 style="margin: 0; color: #333;">{stage}</h4>
-                        </div>
-                        <div style="text-align: right;">
-                            <span style="background-color: {color}; color: white; padding: 4px 12px; 
-                                         border-radius: 20px; font-size: 12px; font-weight: bold;">{stage.split(' ')[1]}</span>
-                        </div>
-                    </div>
-                    
-                    <p style="margin: 10px 0 0 0; color: #666; font-size: 13px;">Prognosis: {prognosis}</p>
-                    
-                    <div style="margin-top: 15px;">
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <div>
-                                <span style="font-weight: bold; color: #333;">Prediction Probability</span>
-                            </div>
-                            <span style="font-weight: bold; color: {color}; font-size: 16px;">{prob:.2f}%</span>
-                        </div>
-                        <div class="probability-bar">
-                            <div class="probability-fill" style="width: {prob}%; background-color: {color};">
-                                {prob:.1f}%
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-            
-            st.markdown("---")
-            
             # ========== 显示概率分布图表 ==========
             st.markdown("### 📈 Probability Distribution Visualization")
             
@@ -367,4 +326,5 @@ st.markdown("""
 </div>
 
 """, unsafe_allow_html=True)
+
 
