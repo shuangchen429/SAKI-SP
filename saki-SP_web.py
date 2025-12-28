@@ -221,7 +221,7 @@ with col2:
                         <p style="font-size:14px; margin:5px 0; color: #666;">Prognosis: <span style="font-weight: bold; color: {stage_color};">{stage_prognosis}</span></p>
                     </div>
                     <div style="text-align: right;">
-                        <p style="font-size:13px; margin:5px 0; color: #888;">Prediction Confidence:</p>
+                        <p style="font-size:13px; margin:5px 0; color: #888;">Predicted Probability:</p>
                         <h3 style="margin:0; color: {stage_color};">{max_prob:.1f}%</h3>
                     </div>
                 </div>
@@ -326,5 +326,6 @@ st.markdown("""
 </div>
 
 """, unsafe_allow_html=True)
+
 
 
