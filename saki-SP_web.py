@@ -17,7 +17,7 @@ with header_container:
     cols = st.columns([0.2, 0.8])
     with cols[0]:
         try:
-            logo = Image.open("东华医院松山湖log.png")
+            logo = Image.open("东华医院图标.png")
             st.image(logo, use_column_width=True)
         except FileNotFoundError:
             st.write("Logo not found")
@@ -57,7 +57,7 @@ feature_ranges = {
     'Glucose': {"type": "numerical", "min": 20, "max": 1500, "default": 90, "unit": "mg/dL"},
     'Sodium': {"type": "numerical", "min": 110, "max": 170, "default": 140, "unit": "mmol/L"},
     'Potassium': {"type": "numerical", "min": 2, "max": 9, "default": 4.0, "unit": "mmol/L"},
-    'INR': {"type": "numerical", "min": 0.5, "max": 20, "default": 1.0, "unit": ""},
+    'INR': {"type": "numerical", "min": 0.5, "max": 20, "default": 1.0},
     'PTT': {"type": "numerical", "min": 5, "max": 150, "default": 30, "unit": "seconds"},
     'Hemoglobin': {"type": "numerical", "min": 3, "max": 25, "default": 14, "unit": "g/dL"},
     'MCHC': {"type": "numerical", "min": 25, "max": 40, "default": 30, "unit": "g/dL"},
@@ -76,39 +76,19 @@ feature_order = [
 sp_descriptions = {
     "Subphenotype I": {
         "color": "#90EE90",
-        "risk": "Low Risk",
-        "label": "Hypoinflammatory",
-        "mortality": "16.4%",
-        "description": "Preserved oxygenation (SpO₂≈100%), low inflammation (WBC 8.9×10⁹/L), reduced heart rate, older age.",
-        "key_features": ["High SpO₂", "Low WBC", "Lower heart rate", "Preserved oxygenation"],
-        "prognosis": "Best survival with ~71-72% at 30 days"
+        "prognosis": "In-hospital mortality 16.4%"
     },
     "Subphenotype II": {
         "color": "#87CEEB",
-        "risk": "Low Risk",
-        "label": "Stable",
-        "mortality": "14.3%",
-        "description": "Highest urine output (470 mL/6h), lowest heart/respiratory rates, normal electrolytes, hemodynamic stability.",
-        "key_features": ["Highest urine output", "Lowest vital signs", "Normal labs", "Lowest mortality"],
-        "prognosis": "Best outcome with lowest mortality rate"
+        "prognosis": "In-hospital mortality 14.3%"
     },
     "Subphenotype III": {
         "color": "#FFD700",
-        "risk": "Intermediate Risk",
-        "label": "Hyperdynamic",
-        "mortality": "21.6%",
-        "description": "Tachycardia, tachypnea, elevated temperature, reduced SpO₂ (≈96%), hypermetabolic state, longest ICU stay.",
-        "key_features": ["Tachycardia", "Tachypnea", "Elevated temperature", "Reduced SpO₂"],
-        "prognosis": "Intermediate survival, younger age group"
+        "prognosis": "In-hospital mortality 21.6%"
     },
     "Subphenotype IV": {
         "color": "#FF6B6B",
-        "risk": "High Risk",
-        "label": "Critical",
-        "mortality": "34.2%",
-        "description": "Severe renal dysfunction (Creatinine 2.2 mg/dL), low urine output (253.5 mL/6h), coagulopathy (high INR), metabolic acidosis (low bicarbonate), intense inflammation.",
-        "key_features": ["High creatinine", "Low urine output", "High INR", "Low bicarbonate", "High WBC"],
-        "prognosis": "Poorest survival (~51% at 30 days, median ~18 days)"
+        "prognosis": "In-hospital mortality 34.2%"
     }
 }
 
@@ -168,7 +148,7 @@ col1, col2 = st.columns([1, 1])
 
 with col1:
     st.header("Patient Clinical Parameters")
-    st.markdown("Enter values within 24 hours of SA-AKI diagnosis:")
+    st.markdown("Enter values the first recorded clinical variables within the ±24-hour window of SA-AKI diagnosis:")
     
     input_values = {}
     
@@ -369,44 +349,6 @@ with col2:
             
             st.markdown("---")
             
-            # ========== 临床建议（基于论文讨论部分） ==========
-            st.markdown("### 💡 Clinical Recommendations & Management")
-            
-            if max_stage == "Subphenotype I":
-                st.info("""
-                **Subphenotype I **
-
-                - **Prognostic Note:** In-hospital mortality 16.4%, with ~71-72% 30-day survival.
-                
-                **Rationale:** Corresponds to less severe inflammatory response; may benefit from phenotype-guided conservative management.
-                """)
-            elif max_stage == "Subphenotype II":
-                st.info("""
-                **Subphenotype II **
-
-                - **Prognostic Note:** Lowest mortality (14.3%); best 30-day survival.
-                
-                **Rationale:** High urine output indicates preserved renal perfusion; aggressive fluids may be harmful in this phenotype.
-                """)
-            elif max_stage == "Subphenotype III":
-                st.warning("""
-                **Subphenotype III **
-
-                - **Prognostic Note:** 21.6% in-hospital mortality; intermediate risk profile.
-                
-                **Rationale:** Hypermetabolic state requires targeted hemodynamic support; monitor for progression to more severe phenotypes.
-                """)
-            elif max_stage == "Subphenotype IV":
-                st.error("""
-                **Subphenotype IV **
-                
-                - **Prognostic Note:** Highest mortality (34.2%); poorest 30-day survival (~51%, median ~18 days).
-                
-                **Rationale:** This phenotype represents the "inflammatory/endothelial injury" endotype with severe systemic physiological disruption. Early aggressive intervention is critical.
-                """)
-            
-            st.markdown("---")
-            
             # ========== 研究背景信息 ==========
             st.markdown("### 📚 Study Background")
             with st.expander("View Study Details"):
@@ -421,8 +363,6 @@ with col2:
                 
                 **Key Findings:**
                 - Four distinct SA-AKI subphenotypes with significantly different outcomes (log-rank P<0.0001)
-                - Subphenotype discrimination based on triad: coagulation dysfunction, metabolic acidosis, systemic inflammation
-                - Current KDIGO staging insufficient for capturing prognostic heterogeneity
                 
                 **Clinical Implications:**
                 - Enables precision phenotyping for risk stratification
@@ -438,7 +378,7 @@ with col2:
         <div style="background-color: #f8f9fa; padding: 20px; border-radius: 10px; border: 1px dashed #ddd;">
             <h4 style="color: #666; margin-top: 0;">Ready for Prediction</h4>
             <p style="color: #888;">Enter patient clinical parameters in the left panel and click the prediction button above.</p>
-            <p style="color: #888; font-size: 12px;">Note: All values should be measured within 24 hours of SA-AKI diagnosis.</p>
+            <p style="color: #888; font-size: 12px;">Note: All values should be measured within ±24 hours of SA-AKI diagnosis.</p>
         </div>
         """, unsafe_allow_html=True)
 
@@ -446,11 +386,12 @@ with col2:
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #666; font-size: 12px; line-height: 1.6;">
-<p><strong>SA-AKI:</strong> Sepsis-Associated Acute Kidney Injury | <strong>KDIGO:</strong> Kidney Disease: Improving Global Outcomes</p>
-<p><strong>Reference:</strong> Chen S, Xu X, Li G, et al. Multi-algorithm consensus clustering identifies four subphenotypes in sepsis-associated acute kidney injury. 2025.</p>
+<p><strong>SA-AKI:</strong> Sepsis-Associated Acute Kidney Injury </p>
+<p><strong>Reference:</strong> Chen S, Xu XC, Li G, et al. Multi-algorithm consensus clustering identifies four subphenotypes in sepsis-associated acute kidney injury. </p>
 <p><strong>Database:</strong> MIMIC-IV v3.1 (Medical Information Mart for Intensive Care IV)</p>
 <p><strong>⚠️ Disclaimer:</strong> This prediction tool is for clinical decision support and research purposes only. Clinical judgment should always supersede algorithmic predictions.</p>
 <p><strong>For questions or technical support:</strong> Contact the corresponding author: Heng Li, M.D., Ph.D. (lh12818@163.com)</p>
 </div>
 
 """, unsafe_allow_html=True)
+
