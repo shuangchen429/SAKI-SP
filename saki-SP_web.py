@@ -287,13 +287,6 @@ with col2:
                        ha='center', va='bottom', fontweight='bold', fontsize=12)
                 
             
-            # 添加图例
-            from matplotlib.patches import Patch
-            legend_elements = [Patch(facecolor=color, edgecolor='black', 
-                                    label=f"SP {stage.split(' ')[1]}: {probabilities[stage]:.1f}%")
-                             for stage, color in zip(stages, colors_list)]
-            ax.legend(handles=legend_elements, loc='upper right', fontsize=10)
-            
             # 调整布局
             plt.tight_layout()
             
@@ -356,5 +349,6 @@ st.markdown("""
 <p><strong>For questions or technical support:</strong> Contact the corresponding author: Heng Li, M.D., Ph.D. (lh12818@163.com)</p>
 </div>
 """, unsafe_allow_html=True)
+
 
 
