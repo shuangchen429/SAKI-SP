@@ -286,13 +286,6 @@ with col2:
                 ax.text(i, prob + max(probs)*0.02, f'{prob:.1f}%', 
                        ha='center', va='bottom', fontweight='bold', fontsize=12)
                 
-                # 在柱状图内部添加亚型名称和预后信息
-                text_y = prob * 0.5  # 柱状图中间位置
-                if prob < 5:  # 如果概率太小，将文字放在柱状图上方
-                    text_y = prob + max(probs)*0.05
-                    font_color = 'black'
-                else:
-                    font_color = 'white'
                 
                 # 添加亚型名称（简写）
                 ax.text(i, text_y, f"SP {stage.split(' ')[1]}", 
@@ -368,3 +361,4 @@ st.markdown("""
 <p><strong>For questions or technical support:</strong> Contact the corresponding author: Heng Li, M.D., Ph.D. (lh12818@163.com)</p>
 </div>
 """, unsafe_allow_html=True)
+
