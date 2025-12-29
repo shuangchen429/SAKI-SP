@@ -210,6 +210,17 @@ with col2:
             stage_color = sp_descriptions[max_stage]["color"]
             stage_prognosis = sp_descriptions[max_stage]["prognosis"]
             
+            # 分解预后字符串，将数字部分单独提取
+            # 假设格式为 "In-hospital mortality 16.4%"
+            # 我们将其分为两部分："In-hospital mortality " 和 "16.4%"
+            prognosis_parts = stage_prognosis.rsplit(' ', 1)
+            if len(prognosis_parts) == 2:
+                prognosis_text = prognosis_parts[0] + " "  # "In-hospital mortality "
+                prognosis_value = prognosis_parts[1]       # "16.4%"
+            else:
+                prognosis_text = stage_prognosis
+                prognosis_value = ""
+            
             st.markdown(f"""
             <div style="background: linear-gradient(135deg, {stage_color}33 0%, {stage_color}66 100%); 
                         padding: 20px; border-radius: 10px; border-left: 6px solid {stage_color}; 
@@ -218,11 +229,14 @@ with col2:
                 <h2 style="margin:8px 0; color: #333;">{max_stage}</h2>
                 <div style="display: flex; justify-content: space-between; margin-top: 10px;">
                     <div>
-                        <p style="font-size:14px; margin:5px 0; color: #666;">Prognosis: <span style="font-weight: bold; color: {stage_color};">{stage_prognosis}</span></p>
+                        <p style="font-size:14px; margin:5px 0; color: #666;">Prognosis: 
+                            <span style="color: {stage_color}; font-weight: bold;">{prognosis_text}</span>
+                            <span style="color: #000000; font-weight: bold;">{prognosis_value}</span>
+                        </p>
                     </div>
                     <div style="text-align: right;">
                         <p style="font-size:13px; margin:5px 0; color: #888;">Predicted Probability:</p>
-                        <h3 style="margin:0; color: {stage_color};">{max_prob:.1f}%</h3>
+                        <h3 style="margin:0; color: #000000; font-weight: bold;">{max_prob:.1f}%</h3>
                     </div>
                 </div>
             </div>
@@ -326,6 +340,3 @@ st.markdown("""
 </div>
 
 """, unsafe_allow_html=True)
-
-
-
