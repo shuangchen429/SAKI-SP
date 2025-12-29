@@ -286,11 +286,6 @@ with col2:
                 ax.text(i, prob + max(probs)*0.02, f'{prob:.1f}%', 
                        ha='center', va='bottom', fontweight='bold', fontsize=12)
                 
-                
-                # 添加亚型名称（简写）
-                ax.text(i, text_y, f"SP {stage.split(' ')[1]}", 
-                       ha='center', va='center', fontweight='bold', 
-                       fontsize=11, color=font_color)
             
             # 添加图例
             from matplotlib.patches import Patch
@@ -361,4 +356,5 @@ st.markdown("""
 <p><strong>For questions or technical support:</strong> Contact the corresponding author: Heng Li, M.D., Ph.D. (lh12818@163.com)</p>
 </div>
 """, unsafe_allow_html=True)
+
 
