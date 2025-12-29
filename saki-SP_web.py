@@ -17,7 +17,7 @@ with header_container:
     with cols[0]:
         try:
             logo = Image.open("东华医院图标.png")
-            st.image(logo, use_container_width=True)  # 修复 use_column_width 警告
+            st.image(logo, use_container_width=True)
         except FileNotFoundError:
             st.write("Logo not found")
     with cols[1]:
@@ -42,7 +42,7 @@ except Exception as e:
     st.error(f"Error loading models: {str(e)}")
     st.stop()
 
-# 定义特征参数 - 修复 INR 缺少 unit 的问题
+# 定义特征参数
 feature_ranges = {
     'Heart rate': {"type": "numerical", "min": 20, "max": 250, "default": 80, "unit": "bpm"},
     'MAP': {"type": "numerical", "min": 30, "max": 200, "default": 90, "unit": "mmHg"},
@@ -56,7 +56,7 @@ feature_ranges = {
     'Glucose': {"type": "numerical", "min": 20, "max": 1500, "default": 90, "unit": "mg/dL"},
     'Sodium': {"type": "numerical", "min": 110, "max": 170, "default": 140, "unit": "mmol/L"},
     'Potassium': {"type": "numerical", "min": 2, "max": 9, "default": 4.0, "unit": "mmol/L"},
-    'INR': {"type": "numerical", "min": 0.5, "max": 20, "default": 1.0, "unit": ""},  # 添加 unit 键
+    'INR': {"type": "numerical", "min": 0.5, "max": 20, "default": 1.0, "unit": ""},
     'PTT': {"type": "numerical", "min": 5, "max": 150, "default": 30, "unit": "seconds"},
     'Hemoglobin': {"type": "numerical", "min": 3, "max": 25, "default": 14, "unit": "g/dL"},
     'MCHC': {"type": "numerical", "min": 25, "max": 40, "default": 30, "unit": "g/dL"},
@@ -157,7 +157,6 @@ with col1:
             for feature in features:
                 properties = feature_ranges[feature]
                 if properties["type"] == "numerical":
-                    # 安全获取 unit，如果不存在则使用空字符串
                     unit = properties.get("unit", "")
                     label = f"{feature} ({unit})" if unit else feature
                     
@@ -250,31 +249,78 @@ with col2:
             
             st.markdown("---")
             
-            # ========== 显示概率分布图表 ==========
+            # ========== 显示概率分布图表（仅柱状图） ==========
             st.markdown("### 📈 Probability Distribution Visualization")
             
-            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+            # 创建单个柱状图
+            fig, ax = plt.subplots(figsize=(10, 6))
             
-            # 柱状图
             stages = list(probabilities.keys())
             probs = list(probabilities.values())
             colors_list = [sp_descriptions[stage]["color"] for stage in stages]
             
-            bars = ax1.bar(range(len(stages)), probs, color=colors_list, edgecolor='black', linewidth=1.5, alpha=0.8)
-            ax1.set_ylabel('Probability (%)', fontsize=12, fontweight='bold')
-            ax1.set_title('SA-AKI Subphenotype Probability Distribution', fontsize=13, fontweight='bold')
-            ax1.set_xticks(range(len(stages)))
-            ax1.set_xticklabels([f"{s.split(' ')[1]}" for s in stages], fontsize=11)
-            ax1.set_ylim(0, max(probs) * 1.2)
-            ax1.grid(axis='y', alpha=0.3, linestyle='--')
+            # 绘制柱状图
+            bars = ax.bar(range(len(stages)), probs, color=colors_list, 
+                         edgecolor='black', linewidth=1.5, alpha=0.8, width=0.7)
+            
+            # 设置图表属性
+            ax.set_ylabel('Probability (%)', fontsize=14, fontweight='bold')
+            ax.set_xlabel('SA-AKI Subphenotype', fontsize=14, fontweight='bold')
+            ax.set_title('SA-AKI Subphenotype Probability Distribution', 
+                        fontsize=16, fontweight='bold', pad=20)
+            
+            # 设置x轴标签
+            ax.set_xticks(range(len(stages)))
+            ax.set_xticklabels([f"SP {s.split(' ')[1]}" for s in stages], 
+                              fontsize=12, fontweight='bold')
+            
+            # 设置y轴范围
+            ax.set_ylim(0, max(probs) * 1.15)
+            
+            # 添加网格线
+            ax.grid(axis='y', alpha=0.3, linestyle='--')
             
             # 添加数值标签
             for i, (stage, prob) in enumerate(zip(stages, probs)):
-                ax1.text(i, prob + 1, f'{prob:.1f}%', ha='center', va='bottom', fontweight='bold', fontsize=10)
+                # 柱状图顶部标签
+                ax.text(i, prob + max(probs)*0.02, f'{prob:.1f}%', 
+                       ha='center', va='bottom', fontweight='bold', fontsize=12)
+                
+                # 在柱状图内部添加亚型名称和预后信息
+                text_y = prob * 0.5  # 柱状图中间位置
+                if prob < 5:  # 如果概率太小，将文字放在柱状图上方
+                    text_y = prob + max(probs)*0.05
+                    font_color = 'black'
+                else:
+                    font_color = 'white'
+                
+                # 添加亚型名称（简写）
+                ax.text(i, text_y, f"SP {stage.split(' ')[1]}", 
+                       ha='center', va='center', fontweight='bold', 
+                       fontsize=11, color=font_color)
             
+            # 添加图例
+            from matplotlib.patches import Patch
+            legend_elements = [Patch(facecolor=color, edgecolor='black', 
+                                    label=f"SP {stage.split(' ')[1]}: {probabilities[stage]:.1f}%")
+                             for stage, color in zip(stages, colors_list)]
+            ax.legend(handles=legend_elements, loc='upper right', fontsize=10)
             
+            # 调整布局
             plt.tight_layout()
+            
+            # 显示图表
             st.pyplot(fig)
+            
+            # 添加图表说明
+            st.markdown("""
+            <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                <p style="font-size: 12px; color: #666; margin: 0;">
+                <strong>Legend:</strong> The bar chart displays the probability distribution across the four SA-AKI subphenotypes. 
+                Higher probabilities indicate greater likelihood of belonging to that specific subphenotype.
+                </p>
+            </div>
+            """, unsafe_allow_html=True)
             
             st.markdown("---")
             
@@ -321,5 +367,4 @@ st.markdown("""
 <p><strong>⚠️ Disclaimer:</strong> This prediction tool is for clinical decision support and research purposes only. Clinical judgment should always supersede algorithmic predictions.</p>
 <p><strong>For questions or technical support:</strong> Contact the corresponding author: Heng Li, M.D., Ph.D. (lh12818@163.com)</p>
 </div>
-
 """, unsafe_allow_html=True)
