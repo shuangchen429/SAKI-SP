@@ -112,7 +112,7 @@ st.markdown("""
         margin-bottom: 12px;
         background-color: #fff;
         border-left: 5px solid #ccc;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1)
     }
     .probability-bar {
         width: 100%;
@@ -253,7 +253,8 @@ with col2:
             # ========== 显示概率分布图表 ==========
             st.markdown("### 📈 Probability Distribution Visualization")
             
-            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+            # 创建两个子图
+            fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
             
             # 柱状图
             stages = list(probabilities.keys())
@@ -272,15 +273,122 @@ with col2:
             for i, (stage, prob) in enumerate(zip(stages, probs)):
                 ax1.text(i, prob + 1, f'{prob:.1f}%', ha='center', va='bottom', fontweight='bold', fontsize=10)
             
-            # 饼图
-            ax2.pie(probs, labels=[f"{s}\n({prob:.1f}%)" for s, prob in zip(stages, probs)], 
-                   colors=colors_list, autopct='', startangle=90, 
-                   textprops={'fontsize': 10, 'fontweight': 'bold'},
-                   wedgeprops={'edgecolor': 'black', 'linewidth': 1.5, 'alpha': 0.8})
+            # 饼图 - 改进版本避免标签重叠
+            wedges, texts, autotexts = ax2.pie(
+                probs, 
+                colors=colors_list, 
+                startangle=90,
+                wedgeprops={'edgecolor': 'black', 'linewidth': 1.5, 'alpha': 0.8},
+                textprops={'fontsize': 10, 'fontweight': 'bold'},
+                # 使用较小的半径为中心文本留出空间
+                radius=0.85,
+                # 设置标签距离饼图中心的距离
+                labeldistance=1.1,
+                # 设置百分比文本距离中心的距离
+                pctdistance=0.75
+            )
+            
+            # 优化饼图标签 - 解决小比重部分标签重叠问题
+            # 方法1：创建图例替代饼图上的标签
+            legend_labels = [f"{stage}\n({prob:.1f}%)" for stage, prob in zip(stages, probs)]
+            ax2.legend(wedges, legend_labels, 
+                      title="Subphenotypes", 
+                      loc="center left", 
+                      bbox_to_anchor=(1, 0, 0.5, 1),
+                      fontsize=10)
+            
+            # 方法2：在饼图中心添加总信息
+            center_text = f"Total: 100%\nMax: {max_prob:.1f}%"
+            ax2.text(0, 0, center_text, 
+                    ha='center', va='center', 
+                    fontsize=11, fontweight='bold',
+                    bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
+            
             ax2.set_title('Probability Distribution (Pie Chart)', fontsize=13, fontweight='bold')
+            
+            # 方法3：为非常小的部分调整标签位置
+            # 检查是否有非常小的部分（小于5%）
+            small_wedges = []
+            for i, prob in enumerate(probs):
+                if prob < 5:
+                    small_wedges.append(i)
+            
+            # 如果有非常小的部分，调整其标签位置
+            if small_wedges:
+                # 暂时隐藏所有自动文本
+                for autotext in autotexts:
+                    autotext.set_visible(False)
+                
+                # 手动添加百分比文本到每个扇形
+                for i, (wedge, prob) in enumerate(zip(wedges, probs)):
+                    # 计算扇形中心的角度
+                    ang = (wedge.theta2 + wedge.theta1) / 2
+                    # 将角度转换为弧度
+                    ang_rad = np.deg2rad(ang)
+                    
+                    # 根据概率大小调整文本位置
+                    if prob < 5:
+                        # 小比例扇形，文本放在外部
+                        x = 1.2 * np.cos(ang_rad)
+                        y = 1.2 * np.sin(ang_rad)
+                        ha = 'left' if x > 0 else 'right'
+                    else:
+                        # 大比例扇形，文本放在内部
+                        x = 0.6 * np.cos(ang_rad)
+                        y = 0.6 * np.sin(ang_rad)
+                        ha = 'center'
+                    
+                    # 添加文本
+                    ax2.text(x, y, f'{prob:.1f}%', 
+                            ha=ha, va='center',
+                            fontsize=9, fontweight='bold',
+                            bbox=dict(boxstyle="round,pad=0.2", facecolor="white", alpha=0.7))
             
             plt.tight_layout()
             st.pyplot(fig)
+            
+            # 如果饼图标签仍然重叠，提供替代方案
+            if any(prob < 5 for prob in probs):
+                st.info("**Note:** Due to small probabilities in some categories, labels are displayed in the legend to avoid overlap.")
+                
+                # 提供一个替代的简化饼图
+                with st.expander("View alternative visualization (Donut Chart)"):
+                    fig2, ax3 = plt.subplots(figsize=(8, 6))
+                    
+                    # 创建环形图，中间留出空间
+                    wedges2, texts2, autotexts2 = ax3.pie(
+                        probs, 
+                        colors=colors_list, 
+                        startangle=90,
+                        wedgeprops={'edgecolor': 'black', 'linewidth': 1.5, 'alpha': 0.8},
+                        textprops={'fontsize': 9},
+                        radius=1.0,
+                        # 创建环形图效果
+                        pctdistance=0.85,
+                        # 不在饼图上显示标签
+                        labels=None
+                    )
+                    
+                    # 在中心添加总信息
+                    centre_circle = plt.Circle((0, 0), 0.6, fc='white')
+                    ax3.add_artist(centre_circle)
+                    
+                    # 添加中心文本
+                    ax3.text(0, 0, f"Total\n100%", 
+                            ha='center', va='center', 
+                            fontsize=14, fontweight='bold')
+                    
+                    # 添加图例
+                    ax3.legend(wedges2, [f"{s}\n({p:.1f}%)" for s, p in zip(stages, probs)],
+                              title="Subphenotypes",
+                              loc="center left",
+                              bbox_to_anchor=(1, 0, 0.5, 1))
+                    
+                    ax3.set_title('Probability Distribution (Donut Chart)', fontsize=13, fontweight='bold')
+                    ax3.axis('equal')
+                    
+                    plt.tight_layout()
+                    st.pyplot(fig2)
             
             st.markdown("---")
             
